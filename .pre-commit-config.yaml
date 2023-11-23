@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v1.3.0
+    hooks:
+      - id: java-checkstyle
+        args: ['--config', 'config/checkstyle/checkstyle.xml']
+        stages: ['commit']
+
+  - repo: local
+    hooks:
+      - id: spotbugs
+        name: SpotBugs
+        entry: ./gradlew spotbugsMain
+        language: script
+        types: [java]
+        pass_filenames: false
