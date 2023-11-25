@@ -5,12 +5,3 @@ repos:
       - id: java-checkstyle
         args: ['--config', 'config/checkstyle/checkstyle.xml']
         stages: ['commit']
-
-  - repo: local
-    hooks:
-      - id: spotbugs
-        name: SpotBugs
-        entry: ./gradlew spotbugsMain
-        language: script
-        types: [java]
-        pass_filenames: false
