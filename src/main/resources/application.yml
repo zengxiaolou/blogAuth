@@ -14,6 +14,26 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  mail:
+    host: smtp.163.com
+    port: 465
+    username: zengxiaoyuwork@163.com
+    password: KXCTFMGZOLAMHQZQ
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+            socketFactory:
+              port: 465
+              class: javax.net.ssl.SSLSocketFactory
+          auth: true
+  data:
+    redis:
+      host: localhost
+      port: 55001
+      password: redispw
 
 server:
   port: 9090
@@ -40,3 +60,6 @@ springdoc:
 capthca:
   secretKey: 6LdiwxspAAAAAH1-V0E35vkkTD2j-2Cr-IiqhTXY
   verifyUrl: https://www.google.com/recaptcha/api/siteverify
+
+email:
+  from: 小楼的破栈<zengxiaoyuwork@163.com>

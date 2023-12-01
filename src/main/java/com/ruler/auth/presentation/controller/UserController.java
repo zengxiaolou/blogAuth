@@ -1,36 +1,43 @@
 package com.ruler.auth.presentation.controller;
 
 import com.ruler.auth.application.service.UserService;
-import com.ruler.auth.domain.model.User;
+import com.ruler.auth.presentation.dto.ApiResponse;
+import com.ruler.auth.presentation.dto.EmailCodeDto;
 import com.ruler.auth.presentation.dto.UserCreateDto;
-import jakarta.validation.Valid;
+import com.ruler.auth.presentation.dto.UserRespDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
    private final UserService userService;
 
-   @Autowired
+    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<User> create(@Valid @RequestBody UserCreateDto userCreateDto) {
-        User user = userService.create(userCreateDto);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<ApiResponse<UserRespDto>> create(@Validated @RequestBody UserCreateDto userCreateDto) {
+        UserRespDto user = userService.create(userCreateDto);
+        ApiResponse<UserRespDto> response = ApiResponse.<UserRespDto>builder()
+                .result(user)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/verify-captcha")
-//    public ResponseEntity<String> create(@Valid @RequestBody UserCreateDto userCreateDto) {
-//        User user = userService.create(userCreateDto);
-//        return ResponseEntity.ok(user);
-//    }
+    @PostMapping("/register-code")
+    public  ResponseEntity<ApiResponse<Boolean>> registerCode(@Validated @RequestBody EmailCodeDto emailCodeDto) {
+        Boolean res = userService.getEmailCode(emailCodeDto);
+        ApiResponse.Metadata metadata = ApiResponse.Metadata.builder()
+                .message("验证码已发送")
+                .build();
+        ApiResponse<Boolean> response = ApiResponse.<Boolean>builder()
+                .result(res).metadata(metadata)
+                .build();
+        return ResponseEntity.ok(response);
+    }
 }
