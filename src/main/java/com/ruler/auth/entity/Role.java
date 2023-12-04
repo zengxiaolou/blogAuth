@@ -1,4 +1,4 @@
-package com.ruler.auth.domain.model;
+package com.ruler.auth.entity;
 
 import jakarta.persistence.*;
 

@@ -1,42 +1,43 @@
 package com.ruler.auth.presentation.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @Builder
-@AllArgsConstructor
 public class ApiResponse<T> {
     private T result;
-    private Map<String, Object> extension;
+    private Map<String, Object> errors;
+    private Metadata metadata;
 
-    @Builder.Default
-    private Metadata metadata = new Metadata();
-
-    @Data
-    @NoArgsConstructor
-    @Builder
-    @AllArgsConstructor
-    public static class Metadata {
-        @Builder.Default
-        private String code = "ok";
-        @Builder.Default
-        private String message = "success";
-        private Page page;
+    public static <T> ApiResponse<T> successWithMessage(String message, T result) {
+        return ApiResponse.<T>builder()
+                .result(result)
+                .metadata(new Metadata(message, "ok"))
+                .build();
     }
 
-    @Data
-    @NoArgsConstructor
+    public static <T> ApiResponse<T> failureWithMessage(String message) {
+        return ApiResponse.<T>builder()
+                .result(null)
+                .metadata(new Metadata(message, "fail"))
+                .build();
+    }
+
+    @Getter
+    @Setter
     @Builder
-    @AllArgsConstructor
-    public static class Page {
-        private int page;
-        private int size;
-        private int total;
+    public static class Metadata {
+        private String code;
+        private String message;
+
+        public Metadata(String message, String code) {
+            this.message = message;
+            this.code = code;
+        }
     }
 }

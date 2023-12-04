@@ -26,4 +26,12 @@ public class RedisServiceImpl implements RedisService {
         return redisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 
+    public String get(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
+
+    public void delete(String key) {
+        redisTemplate.delete(key);
+    }
+
 }

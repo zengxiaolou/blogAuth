@@ -23,21 +23,11 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<UserRespDto>> create(@Validated @RequestBody UserCreateDto userCreateDto) {
         UserRespDto user = userService.create(userCreateDto);
-        ApiResponse<UserRespDto> response = ApiResponse.<UserRespDto>builder()
-                .result(user)
-                .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.successWithMessage("注册成功", user));
     }
 
     @PostMapping("/register-code")
     public  ResponseEntity<ApiResponse<Boolean>> registerCode(@Validated @RequestBody EmailCodeDto emailCodeDto) {
-        Boolean res = userService.getEmailCode(emailCodeDto);
-        ApiResponse.Metadata metadata = ApiResponse.Metadata.builder()
-                .message("验证码已发送")
-                .build();
-        ApiResponse<Boolean> response = ApiResponse.<Boolean>builder()
-                .result(res).metadata(metadata)
-                .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok( userService.getEmailCode(emailCodeDto));
     }
 }
