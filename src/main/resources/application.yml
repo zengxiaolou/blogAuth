@@ -57,9 +57,9 @@ springdoc:
     enabled: true
     path: /swagger-ui/index.html
 
-capthca:
-  secretKey: 6LdiwxspAAAAAH1-V0E35vkkTD2j-2Cr-IiqhTXY
-  verifyUrl: https://www.google.com/recaptcha/api/siteverify
-
 email:
   from: 小楼的破栈<zengxiaoyuwork@163.com>
+
+jwt:
+  secretKey: Zzxxyy123...
+  tokenValidity: 172800

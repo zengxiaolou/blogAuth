@@ -4,7 +4,6 @@ import com.ruler.auth.application.service.UserService;
 import com.ruler.auth.presentation.dto.ApiResponse;
 import com.ruler.auth.presentation.dto.EmailCodeDto;
 import com.ruler.auth.presentation.dto.UserCreateDto;
-import com.ruler.auth.presentation.dto.UserRespDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,9 +20,9 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<UserRespDto>> create(@Validated @RequestBody UserCreateDto userCreateDto) {
-        UserRespDto user = userService.create(userCreateDto);
-        return ResponseEntity.ok(ApiResponse.successWithMessage("注册成功", user));
+    public ResponseEntity<ApiResponse<String>> create(@Validated @RequestBody UserCreateDto userCreateDto) {
+        String token = userService.create(userCreateDto);
+        return ResponseEntity.ok(ApiResponse.successWithMessage("注册成功", token));
     }
 
     @PostMapping("/register-code")

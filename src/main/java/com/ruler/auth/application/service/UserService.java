@@ -1,15 +1,17 @@
 package com.ruler.auth.application.service;
 
 import com.ruler.auth.application.interfaces.CustomerMailService;
+import com.ruler.auth.config.JwtTokenProvider;
 import com.ruler.auth.domain.mapper.UserMapper;
 import com.ruler.auth.domain.model.RegisterBO;
 import com.ruler.auth.domain.service.UserDomainService;
+import com.ruler.auth.entity.Role;
 import com.ruler.auth.entity.User;
+import com.ruler.auth.infrastructure.repository.RoleRepository;
 import com.ruler.auth.infrastructure.repository.UserRepository;
 import com.ruler.auth.presentation.dto.ApiResponse;
 import com.ruler.auth.presentation.dto.EmailCodeDto;
 import com.ruler.auth.presentation.dto.UserCreateDto;
-import com.ruler.auth.presentation.dto.UserRespDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,24 +23,30 @@ public class UserService {
     private final CustomerMailService customerMailService;
     private final UserDomainService userDomainService;
     private final UserMapper userMapper=UserMapper.INSTANCE;
+    private final RoleRepository roleRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, CustomerMailService customerMailService,
-                       UserDomainService userDomainService) {
+                       UserDomainService userDomainService,RoleRepository roleRepository, JwtTokenProvider jwtTokenProvider) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.customerMailService = customerMailService;
         this.userDomainService = userDomainService;
+        this.roleRepository = roleRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public UserRespDto create(UserCreateDto userDto) {
+    public String create(UserCreateDto userDto) {
         userDomainService.VerifyCode(userDto.getEmail(), userDto.getCode());
         RegisterBO bo= userMapper.userDtoToRegisterBO(userDto);
         bo.setPassword(bo.getPassword(), passwordEncoder);
         bo.updateTime();
         User user = userMapper.RegisterBOToUser(bo);
+        Role defaultRole = roleRepository.findByName("USER");
+        user.getRoles().add(defaultRole);
         User saveUser =  userRepository.save(user);
-        return new UserRespDto(saveUser.getUsername());
+        return jwtTokenProvider.generateToken(saveUser.getUsername(), saveUser.getRoles());
     }
 
     public ApiResponse<Boolean> getEmailCode(EmailCodeDto emailCodeDto) {

@@ -35,6 +35,6 @@ public class UserDomainService {
         if (!code.equals(redisService.get(email+"-" +prefix))) {
             throw new CodeException("验证码错误");
         }
-        redisService.delete(email+prefix);
+        redisService.delete(email+"-" + prefix);
     }
 }
