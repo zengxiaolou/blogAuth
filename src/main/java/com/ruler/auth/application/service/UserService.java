@@ -11,6 +11,7 @@ import com.ruler.auth.infrastructure.repository.RoleRepository;
 import com.ruler.auth.infrastructure.repository.UserRepository;
 import com.ruler.auth.presentation.dto.ApiResponse;
 import com.ruler.auth.presentation.dto.EmailCodeDto;
+import com.ruler.auth.presentation.dto.TokenResponse;
 import com.ruler.auth.presentation.dto.UserCreateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,4 +58,19 @@ public class UserService {
         String code = userDomainService.getRegisterCode(emailCodeDto.getEmail());
         customerMailService.sendSimpleEmail(emailCodeDto.getEmail(), "小楼的破栈注册邮件", String.format("您的验证吗是： %s", code));
         return ApiResponse.successWithMessage("验证码已发送", true);}
+
+    public ApiResponse<TokenResponse> login(String username, String password) {
+        User user = userRepository.findByEmail(username);
+        if (user == null){
+            return ApiResponse.failureWithMessage("用户不存在");
+        }
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            String token = jwtTokenProvider.generateToken(user.getUsername(), user.getRoles());
+            TokenResponse tokenObj = TokenResponse.builder().token(token).build();
+            return ApiResponse.successWithMessage("登录成功", tokenObj);
+        }else {
+            return ApiResponse.failureWithMessage("账号或密码错误");
+        }
+
+    }
 }
